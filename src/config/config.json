@@ -1,0 +1,8 @@
+{
+  "titleMaxLength": 32,
+  "showSearchTitles": 5,
+  "showLatestTitles": 3,
+  "explorer": "https://explorer.chronicler.cc",
+  "nodes": ["https://api.chronicler.cc"],
+  "fundingPassphrase": ""
+}

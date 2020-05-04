@@ -1,0 +1,9 @@
+.title-card {
+  background-color: #fff;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.title-card:hover {
+  background-color: #ccc;
+}

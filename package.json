@@ -1,0 +1,62 @@
+{
+  "name": "chronicler-client",
+  "version": "0.1.0",
+  "author": "Sidechain Solutions",
+  "homepage": "https://www.chronicler.cc",
+  "description": "A distributed network to store, audit, or verify various types of data built using the Lisk SDK.",
+  "keywords": [
+    "chronicler",
+    "lisk",
+    "sdk",
+    "javascript",
+    "blockchain",
+    "sidechain",
+    "sidechain solutions"
+  ],
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-regular-svg-icons": "^5.11.2",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
+    "animate.css": "^3.7.2",
+    "bootstrap": "^4.3.1",
+    "chronicler-transactions": "file:./src/transactions",
+    "file-saver": "^2.0.2",
+    "jquery": "^3.4.1",
+    "lisk-elements": "^2.4.2",
+    "node-base91": "^0.3.4",
+    "node-sass": "^4.14.0",
+    "popper.js": "^1.15.0",
+    "react": "^16.8.6",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dom": "^16.10.1",
+    "react-dropzone": "^10.1.10",
+    "react-html-parser": "^2.0.2",
+    "react-modal": "^3.10.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.4.1",
+    "react-spinners": "^0.6.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

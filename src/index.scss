@@ -1,0 +1,106 @@
+$enable-responsive-font-sizes: true;
+
+@import url("https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed&display=swap");
+
+$primary: #018afe;
+$dark: #000910;
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Ubuntu Condensed", sans-serif !important;
+}
+
+html {
+  height: 100vh;
+}
+
+body {
+  font-family: "Ubuntu", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: #001a3d !important;
+  padding-top: 6rem;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.vertical-center {
+  min-height: calc(100% - 6rem);
+  min-height: calc(100vh - 6rem);
+
+  display: flex;
+  align-items: center;
+}
+
+.clear {
+  clear: both;
+}
+
+.home-btns {
+  width: 15em !important;
+}
+
+.no-decoration {
+  text-decoration: none !important;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.home-nav {
+  padding: 0.4em 0.8em !important;
+  border-radius: 0.3em !important;
+  font-size: 4em !important;
+}
+
+.home-nav-text {
+  font-size: 0.25em !important;
+}
+
+.logo-header {
+  height: 2em;
+}
+
+.logo-main {
+  margin-top: -2em;
+  margin-bottom: 6em;
+}
+
+@import "~bootstrap/scss/bootstrap.scss";
+@import "~animate.css";
+
+@media screen and (max-width: 992px) {
+  body {
+    font-size: 0.95em;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 0.9em;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  body {
+    font-size: 0.85em;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  body {
+    font-size: 0.8em;
+  }
+
+  .home-nav {
+    padding: 0.3em 0.41em !important;
+    border-radius: 0.3em !important;
+    font-size: 3.5em !important;
+  }
+}

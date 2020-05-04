@@ -1,0 +1,6 @@
+.drag-drop {
+  height: 16em;
+  border-style: dashed !important;
+  border-width: 3px !important;
+  border-radius: 0.5em;
+}

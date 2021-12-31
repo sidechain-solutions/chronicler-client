@@ -47,7 +47,7 @@ const Header = () => (
         </ul>
       </div>
       <div className="ml-auto text-muted">
-        <small>Chronicler PoC - ©2019 Sidechain Solutions</small>
+        <small>Chronicler PoC - ©2021 Sidechain Solutions</small>
       </div>
     </div>
   </nav>

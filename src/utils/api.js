@@ -1,59 +1,137 @@
-import { ArchiveTextTransaction, ArchiveBinaryTransaction } from "chronicler-transactions";
-import { EPOCH_TIME } from "@liskhq/lisk-constants";
-import { utils } from "@liskhq/lisk-transactions";
-import { APIClient } from "@liskhq/lisk-api-client";
-import { getAddressFromPassphrase } from "@liskhq/lisk-cryptography";
+const { APIClient, codec, cryptography, transactions } = require( '@liskhq/lisk-client');
 
 import { readFile, encodeData } from "./files";
-import { nodes, fundingPassphrase } from "../config/config";
+import { wsNode, fundingPassphrase } from "../config/config";
 
-const client = new APIClient(nodes);
+const archiveBinarySchema = {
+  $id: 'lisk/archivebinary/transaction',
+  type: 'object',
+  required: ["data"],
+  properties: {
+      data: {
+          dataType: 'string',
+          fieldNumber: 1
+      }
+  }
+}
 
-const getTs = () => Math.round((Date.now() - Date.parse(EPOCH_TIME)) / 1000) - 60;
+const archiveTextSchema = {
+  $id: 'lisk/archivetext/transaction',
+  type: 'object',
+  required: ["data"],
+  properties: {
+      data: {
+          dataType: 'string',
+          fieldNumber: 1
+      }
+  }
+}
+
+const client = () => { return getClient()
+  .then(function(response){ return response;})
+  .catch(function(error){
+    console.log("error connecting to client" + error);
+    return undefined;
+  });
+}
+
+const networkIdentifier = "a5f4ae7dd207c8d9767c10ec17544ec46eacd9b351ecbdda5c6e97a0dfc5acd2";
+
+getClient = async () => {
+  if (!ApiHelper.clientCache) {            
+      ApiHelper.clientCache = await APIClient.createWSClient(wsNode);
+  }        
+  
+  return ApiHelper.clientCache;
+};
+
+const getAccountFromAddress = async (address) => {
+  
+  const client = await getClient();
+  const schema = await client.invoke('app:getSchema');
+  const account = await client.invoke('app:getAccount', {
+      address,
+  });
+          
+  return codec.codec.decodeJSON(schema.account, Buffer.from(account, 'hex'));
+};
+
+const getAccountNonce = async (address) => {
+  var account = await getAccountFromAddress(address);        
+  const sequence = account.sequence;
+  return Number(sequence.nonce);
+};
+
+const sendTransaction = async(transaction) => {
+  const client = await getClient();        
+  const result = await client.transaction.send(transaction);
+
+  return result;
+}
 
 const archiveText = form => {
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
-  const address = getAddressFromPassphrase(passphrase);
+  const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 
-  const tx = new ArchiveTextTransaction({
-    asset: {
-      data: JSON.stringify({
-        title: form.title,
-        text: form.text
-      })
+  const accountNonce = await getAccountNonce(sender.address);
+
+  const tx = await transactions.signTransaction(
+    archiveTextSchema,
+    {
+        moduleID: 5000,
+        assetID: 101,
+        nonce: BigInt(accountNonce),
+        fee: BigInt(Math.round(JSON.stringify({
+          title: form.title,
+          text: form.text
+        }).length * 1024 * 10000 / 1000 * 3)),
+        senderPublicKey: sender.publicKey,
+        asset: {
+            data: JSON.stringify({
+              title: form.title,
+              text: form.text
+            }),
+            recipientAddress: sender.address
+        },
     },
-    fee: utils.convertLSKToBeddows("10"),
-    recipientId: address,
-    timestamp: getTs()
-  });
+    Buffer.from(networkIdentifier, "hex"),
+    passphrase);
 
-  tx.sign(passphrase);
-
-  return client.transactions.broadcast(tx.toJSON());
+  return await sendTransaction(tx);  
 };
 
 const archiveFile = async form => {
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
-  const address = getAddressFromPassphrase(passphrase);
+  const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
+
+  const accountNonce = await getAccountNonce(sender.address);
 
   const fileArrayBuffer = await readFile(form.file);
   const encodedData = encodeData(fileArrayBuffer);
 
-  const tx = new ArchiveBinaryTransaction({
-    asset: {
-      data: JSON.stringify({
-        title: form.title,
-        binary: encodedData
-      })
+  const tx = await transactions.signTransaction(
+    archiveBinarySchema,
+    {
+        moduleID: 5000,
+        assetID: 102,
+        nonce: BigInt(accountNonce),
+        fee: BigInt(Math.round(JSON.stringify({
+          title: form.title,
+          binary: encodedData
+        }).length * 10000 * 3)),
+        senderPublicKey: sender.publicKey,
+        asset: {
+            data: JSON.stringify({
+              title: form.title,
+              binary: encodedData
+            }),
+            recipientAddress: sender.address
+        },
     },
-    fee: utils.convertLSKToBeddows("100"),
-    recipientId: address,
-    timestamp: getTs()
-  });
+    Buffer.from(networkIdentifier, "hex"),
+    passphrase);
 
-  tx.sign(passphrase);
-
-  return client.transactions.broadcast(tx.toJSON());
+  return await sendTransaction(tx);   
 };
 
 export const processSubmission = async form => {
@@ -65,3 +143,5 @@ export const processSubmission = async form => {
 };
 
 export const getTransactions = options => client.transactions.get(options);
+
+export const getTransactionById = option => client.transaction.get(Buffer.from(option), 'hex');

@@ -1,6 +1,5 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { EPOCH_TIME } from "@liskhq/lisk-constants";
 import { titleMaxLength } from "../../config/config.json";
 import { Link } from "react-router-dom";
 import { saveFileArchive } from "../../utils/files";
@@ -33,7 +32,7 @@ const TitlePreview = ({ data, type }) => {
         <span className="text-muted">ID: {data.id}</span>
         <hr />
 
-        {new Date(data.timestamp * 1000 + Date.parse(EPOCH_TIME)).toLocaleDateString()}
+        {new Date(data.timestamp * 1000).toLocaleDateString()}
         {type === "files" && <FontAwesomeIcon className="ml-3" icon="download" />}
       </div>
     </div>
@@ -48,7 +47,7 @@ const TitlePreview = ({ data, type }) => {
         </div>
 
         <div className="ml-auto">
-          {new Date(data.timestamp * 1000 + Date.parse(EPOCH_TIME)).toLocaleDateString()}
+          {new Date(data.timestamp * 1000).toLocaleDateString()}
           {type === "files" && <FontAwesomeIcon className="ml-3" icon="download" />}
         </div>
       </div>

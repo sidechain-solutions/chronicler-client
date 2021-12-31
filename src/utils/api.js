@@ -1,7 +1,7 @@
-const { APIClient, codec, cryptography, transactions } = require( '@liskhq/lisk-client');
-
 import { readFile, encodeData } from "./files";
 import { wsNode, fundingPassphrase } from "../config/config";
+
+const { APIClient, codec, cryptography, transactions, BigInt } = require( '@liskhq/lisk-client');
 
 const archiveBinarySchema = {
   $id: 'lisk/archivebinary/transaction',
@@ -27,6 +27,8 @@ const archiveTextSchema = {
   }
 }
 
+const clientCache = null;
+
 const client = () => { return getClient()
   .then(function(response){ return response;})
   .catch(function(error){
@@ -37,12 +39,12 @@ const client = () => { return getClient()
 
 const networkIdentifier = "a5f4ae7dd207c8d9767c10ec17544ec46eacd9b351ecbdda5c6e97a0dfc5acd2";
 
-getClient = async () => {
-  if (!ApiHelper.clientCache) {            
-      ApiHelper.clientCache = await APIClient.createWSClient(wsNode);
+const getClient = async () => {
+  if (!clientCache) {            
+      clientCache = await APIClient.createWSClient(wsNode);
   }        
   
-  return ApiHelper.clientCache;
+  return clientCache;
 };
 
 const getAccountFromAddress = async (address) => {
@@ -69,7 +71,7 @@ const sendTransaction = async(transaction) => {
   return result;
 }
 
-const archiveText = form => {
+const archiveText = async (form) => {
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
   const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 
@@ -100,7 +102,7 @@ const archiveText = form => {
   return await sendTransaction(tx);  
 };
 
-const archiveFile = async form => {
+const archiveFile = async (form) => {
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
   const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 
@@ -134,11 +136,11 @@ const archiveFile = async form => {
   return await sendTransaction(tx);   
 };
 
-export const processSubmission = async form => {
+export const processSubmission = async (form) => {
   if (form.type === "text") {
-    return archiveText(form);
+    return await archiveText(form);
   } else if (form.type === "file") {
-    return archiveFile(form);
+    return await archiveFile(form);
   }
 };
 

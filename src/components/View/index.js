@@ -41,7 +41,7 @@ const View = () => {
             <input
               className="form-control form-control-lg"
               type="text"
-              placeholder="Enter address.."
+              placeholder="Enter public key.."
               onChange={handleInputChange}
               required
             />

@@ -5,6 +5,6 @@
   "explorer": "https://explorer.chronicler.cc",
   "nodes": ["https://api.chronicler.cc"],
   "wsNode": "ws://api.chronicler.cc:8080/ws",
-  "fundingPassphrase": "modify soon outdoor seminar hire critic arrest enact develop riot person sell"
-
+  "fundingPassphrase": "modify soon outdoor seminar hire critic arrest enact develop riot person sell",
+  "apiHelper":"https://www.chronicler.cc:3333" 
 }

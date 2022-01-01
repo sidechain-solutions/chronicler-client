@@ -18,11 +18,11 @@ const View = () => {
 
   const Alert = () => (
     <div className="alert alert-warning d-block text-left">
-      <strong>INFO:</strong> This is where you enter your account address to search and view all of
+      <strong>INFO:</strong> This is where you enter your account public key to search and view all of
       your archived titles. <br />
       <br />
-      For demo purposes, use: ac0accb8f0f09582042510c6ecc6cfe5193ca6ae{" "}
-      <CopyToClipboard text="ac0accb8f0f09582042510c6ecc6cfe5193ca6ae" onCopy={() => setCopied(true)}>
+      For demo purposes, use: {"a0dfd75828422938653ebd8cd53462ad4687f0d6f373450a8418a7adc1d51b4d"}
+      <CopyToClipboard text="a0dfd75828422938653ebd8cd53462ad4687f0d6f373450a8418a7adc1d51b4d" onCopy={() => setCopied(true)}>
         <FontAwesomeIcon className="link" icon={["far", "copy"]} />
       </CopyToClipboard>
       {copied && <small> copied!</small>}

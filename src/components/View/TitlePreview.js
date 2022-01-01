@@ -32,7 +32,7 @@ const TitlePreview = ({ data, type }) => {
         <span className="text-muted">ID: {data.id}</span>
         <hr />
 
-        {new Date(data.timestamp * 1000).toLocaleDateString()}
+        {assetData.timestamp ? new Date(assetData.timestamp).toLocaleDateString() : ""}
         {type === "files" && <FontAwesomeIcon className="ml-3" icon="download" />}
       </div>
     </div>
@@ -47,7 +47,7 @@ const TitlePreview = ({ data, type }) => {
         </div>
 
         <div className="ml-auto">
-          {new Date(data.timestamp * 1000).toLocaleDateString()}
+          {assetData.timestamp ? new Date(assetData.timestamp).toLocaleDateString() : ""}
           {type === "files" && <FontAwesomeIcon className="ml-3" icon="download" />}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { readFile, encodeData } from "./files";
-const { Helper, getBlockByHeight } = require ('./biginthelper');
+const { Helper } = require ('./biginthelper');
 const { wsNode, fundingPassphrase } = require("../config/config.json");
 
 const { apiClient, cryptography, transactions, Buffer } = require( '@liskhq/lisk-client');
@@ -49,14 +49,70 @@ async function getAccountFromAddress (address)  {
   const account = await client.invoke('app:getAccount', {
       address,      
   });
+  var decoded = await client.account.decode(Buffer.from(account, 'hex'));
   
-  return await client.account.decode(Buffer.from(account, 'hex'));
+  return await client.account.toJSON(decoded);
 };
 
-async function getAccountNonce (address) {  
-  var account = await getAccountFromAddress(address);  
+async function getAccountNonce (account) {    
   return Number(account.sequence.nonce);
 };
+
+async function getTransactionById (id)  {
+  const client = await getClient();  
+  const transaction = await client.invoke('app:getTransactionByID', {id: id});
+  const decoded = await client.transaction.decode(Buffer.from(transaction, 'hex'))
+  
+  return await client.transaction.toJSON(decoded);
+};
+
+const getTransactionsByPersistedIds = async(options) => {
+  //api consult
+  var url= "http://localhost:3333";
+    var reqOptions = {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" }      
+    };
+    var req = await fetch (url, reqOptions);   
+    var result = await req.json();
+    var file = JSON.parse(result);
+
+    var ids = [];
+
+    file.transactions.forEach(element => {
+      ids.push(element.transactionId);
+    });
+
+  return await getTransactionsByIds(ids, options);
+}
+
+const getTransactionsByIds = async(ids, options) => {
+  const client = await getClient();
+    
+  var transactions = await client.invoke('app:getTransactionsByIDs', {"ids": ids});
+
+  var decodedTransactions = [];
+
+  for (var index=transactions.length-1;index >= 0; index--)
+  {    
+    var id = transactions[index];
+    const transactionObject = await client.transaction.decode(Buffer.from(id, 'hex'));
+    const transactionJSON = await client.transaction.toJSON(transactionObject);
+    
+    if (transactionJSON.assetID !== options.type){
+      continue;
+    }    
+    
+    if (transactionJSON.senderPublicKey !== options.senderId){
+      continue;
+    }
+    console.log(transactionJSON);
+    decodedTransactions.push(transactionJSON);
+  }  
+
+  return decodedTransactions;
+}
 
 const getBlockByHeightWithFilter = async(options, index, resultList) => {  
   const client = await getClient();
@@ -109,7 +165,7 @@ const getBlocks = async(options) => {
 const sendTransaction = async(transaction) => {
   const client = await getClient();        
   const result = await client.transaction.send(transaction);
-
+  
   return result;
 }
 
@@ -122,7 +178,8 @@ async function archiveText (form) {
   
   const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);  
 
-  var accountNonce = await getAccountNonce(sender.address);
+  var account = await getAccountFromAddress(sender.address);
+  var accountNonce = await getAccountNonce(account);
 
   try{
   const tx = transactions.signTransaction(
@@ -136,20 +193,32 @@ async function archiveText (form) {
         asset: {
             data: JSON.stringify({
               title: form.title,
-              text: form.text
+              text: form.text,
+              timestamp: Date.now()
             }),
             recipientAddress: sender.address
         },
     },
     Buffer.from(networkIdentifier, "hex"),
     passphrase);    
+        
+    var result = await sendTransaction(tx);
 
-    console.log(tx);
+    var url= "http://localhost:3333/push";
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(result)
+    };
+    var req = await fetch (url, options);    
 
-    return await sendTransaction(tx);  
+    console.log("request persist", req.status);
+    
+    return result;  
   }catch(e){
     console.log("error signing transaction", e);
-  }    
+  }   
 };
 
 const archiveFile = async (form) => {
@@ -173,7 +242,7 @@ const archiveFile = async (form) => {
         moduleID: 5000,
         assetID: 102,
         nonce: Helper(accountNonce),
-        fee: Helper(formLength * 10000 * 1024 / 1000 * 10),
+        fee: Helper(formLength * 10000 * 15),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({
@@ -200,16 +269,15 @@ export const processSubmission = async (form) => {
   }
 };
 
-export const getTransactions = options => getClient().then(function(client){
-  var result = getBlocks(options);
-  return result;
+export const getTransactions = options => getTransactionsByPersistedIds(options).then(function(response){  
+  return response;
 }).catch(function(e){
   console.log("error getTransactions", e);
   return null;
 });
 
-export const getTransactionById = option => getClient().then(function(client){
-  return client.transaction.decode(Buffer.from(option), 'hex').toJSON();
+export const getTransaction = option => getTransactionById(option.id).then(function(response){
+  return response;
 }).catch(function(e){
   console.log("error getTransaction", e);
   return null;

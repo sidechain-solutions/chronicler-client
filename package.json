@@ -19,7 +19,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.5",
-    "@liskhq/lisk-client": "^5.2.0",
+    "@liskhq/lisk-client": "^5.0.3",
     "animate.css": "^3.7.2",
     "bootstrap": "^4.3.1",
     "file-saver": "^2.0.2",
@@ -27,7 +27,7 @@
     "node-base91": "^0.3.4",
     "node-sass": "^4.14.0",
     "popper.js": "^1.15.0",
-    "react": "^16.8.6",
+    "react": "^16.8.2",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.10.1",
     "react-dropzone": "^10.1.10",
@@ -35,7 +35,8 @@
     "react-modal": "^3.10.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",
-    "react-spinners": "^0.6.1"
+    "react-spinners": "^0.6.1",
+    "typescript": "^4.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -44,7 +45,8 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "es2020": true
   },
   "browserslist": {
     "production": [

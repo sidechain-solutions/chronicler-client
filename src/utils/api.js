@@ -1,6 +1,6 @@
 import { readFile, encodeData } from "./files";
 const { Helper } = require ('./biginthelper');
-const { wsNode, fundingPassphrase } = require("../config/config.json");
+const { apiHelper, wsNode, fundingPassphrase } = require("../config/config.json");
 
 const { apiClient, cryptography, transactions, Buffer } = require( '@liskhq/lisk-client');
 
@@ -68,7 +68,7 @@ async function getTransactionById (id)  {
 
 const getTransactionsByPersistedIds = async(options) => {
   //api consult
-  var url= "http://localhost:3333";
+  var url= apiHelper;
     var reqOptions = {
       method: "POST",
       mode: "cors",
@@ -204,7 +204,7 @@ async function archiveText (form) {
         
     var result = await sendTransaction(tx);
 
-    var url= "http://localhost:3333/push";
+    var url= apiHelper + "/push";
     var options = {
       method: "POST",
       mode: "cors",

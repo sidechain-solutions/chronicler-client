@@ -33,17 +33,7 @@ const Header = () => (
             <NavLink to="/view" className="nav-link text-light">
               VIEW
             </NavLink>
-          </li>
-          <li className="nav-item active">
-            <a
-              href={explorer}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="nav-link text-light"
-            >
-              BLOCK EXPLORER
-            </a>
-          </li>
+          </li>          
         </ul>
       </div>
       <div className="ml-auto text-muted">

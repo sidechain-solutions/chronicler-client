@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactHtmlParser from "react-html-parser";
-import { getTransactions } from "../../utils/api";
+import { getTransaction } from "../../utils/api";
 import { saveTextArchive } from "../../utils/files";
 
 const ViewAccount = props => {
@@ -10,12 +10,12 @@ const ViewAccount = props => {
   const id = props.match.params.id;
 
   useEffect(() => {
-    getTransactions({
+    getTransaction({
       type: 101,
       id
     })
       .then(res => {
-        const tx = res.data[0];
+        const tx = res;
         setTitle(tx);
         setAssetData(JSON.parse(tx.asset.data));
       })

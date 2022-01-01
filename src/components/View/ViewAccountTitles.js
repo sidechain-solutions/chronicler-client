@@ -12,7 +12,8 @@ const acceptedTypes = { text: 101, files: 102 };
 const ViewAccountTitles = props => {
   const [redirect, setRedirect] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [titles, setTitles] = useState({ meta: { count: 0 }, data: [], links: {} });
+  //const [titles, setTitles] = useState({ meta: { count: 0 }, data: [], links: {} });
+  const [titles, setTitles] = useState({ });
 
   const senderId = props.match.params.id;
   const offset = props.match.params.offset ? parseInt(props.match.params.offset) : 0;
@@ -31,7 +32,7 @@ const ViewAccountTitles = props => {
       .then(res => {
         setTitles(res);
         setIsLoading(false);
-        if (res.meta.count === 0) {
+        if (res.length === 0) {
           goBack();
         }
       })
@@ -71,7 +72,7 @@ const ViewAccountTitles = props => {
         </Link>
       );
     } else if (direction === "next") {
-      const isDisabled = titles.meta.count - offset < showSearchTitles;
+      const isDisabled = titles.length - offset < showSearchTitles;
 
       buttonComponent = isDisabled ? (
         <button className="btn btn-lg btn-outline-primary mt-4 mb-5" disabled>
@@ -99,8 +100,8 @@ const ViewAccountTitles = props => {
         </Link>
       </h1>
 
-      {titles.data.length > 0 &&
-        titles.data.map(title => (
+      {titles.length > 0 &&
+        titles.map(title => (
           <TitlePreview key={title.id} data={title} type={type}></TitlePreview>
         ))}
 
@@ -110,19 +111,19 @@ const ViewAccountTitles = props => {
         </h1>
       )}
 
-      {!isLoading && titles.data.length > 0 && (
+      {!isLoading && titles.length > 0 && (
         <>
           <p className="text-white">
             Viewing <strong>{type === "text" ? "text" : "file"}</strong> archives {offset + 1}-
-            {showSearchTitles < titles.meta.count ? offset + showSearchTitles : titles.meta.count}{" "}
-            of {titles.meta.count}
+            {showSearchTitles < titles.length ? offset + showSearchTitles : titles.length}{" "}
+            of {titles.length}
           </p>
           <PaginationButton direction="previous" />
           <PaginationButton direction="next" />
         </>
       )}
 
-      {titles.data.length === 0 && !isLoading && (
+      {titles.length === 0 && !isLoading && (
         <p className="text-white">No results found. Automatically returning in 3 seconds...</p>
       )}
 

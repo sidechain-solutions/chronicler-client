@@ -21,8 +21,8 @@ const View = () => {
       <strong>INFO:</strong> This is where you enter your account address to search and view all of
       your archived titles. <br />
       <br />
-      For demo purposes, use: 12643749354486190184L{" "}
-      <CopyToClipboard text="12643749354486190184L" onCopy={() => setCopied(true)}>
+      For demo purposes, use: ac0accb8f0f09582042510c6ecc6cfe5193ca6ae{" "}
+      <CopyToClipboard text="ac0accb8f0f09582042510c6ecc6cfe5193ca6ae" onCopy={() => setCopied(true)}>
         <FontAwesomeIcon className="link" icon={["far", "copy"]} />
       </CopyToClipboard>
       {copied && <small> copied!</small>}

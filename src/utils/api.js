@@ -247,7 +247,7 @@ const archiveFile = async (form) => {
         moduleID: 5000,
         assetID: 102,
         nonce: Helper(accountNonce),
-        fee: Helper(formLength * 10000 * 5),
+        fee: Helper(formLength * 10000 * 1024 / 1000 * 10),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({

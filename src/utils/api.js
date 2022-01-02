@@ -226,7 +226,8 @@ const archiveFile = async (form) => {
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
   const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 
-  const accountNonce = await getAccountNonce(sender.address);
+  const account = await getAccountFromAddress(sender.address);
+  const accountNonce = await getAccountNonce(account);
 
   const fileArrayBuffer = await readFile(form.file);
   const encodedData = encodeData(fileArrayBuffer);
@@ -255,9 +256,20 @@ const archiveFile = async (form) => {
     Buffer.from(networkIdentifier, "hex"),
     passphrase);
 
-    console.log(tx);
+    var result = await sendTransaction(tx);
 
-  return await sendTransaction(tx);   
+    var url= apiHelper + "/push";
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(result)
+    };
+    var req = await fetch (url, options);    
+
+    console.log("request persist", req.status);
+
+  return result;   
 };
 
 export const processSubmission = async (form) => {

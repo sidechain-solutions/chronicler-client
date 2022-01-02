@@ -77,12 +77,12 @@ const getTransactionsByPersistedIds = async(options) => {
     var req = await fetch (url, reqOptions);   
     var result = await req.json();
     var file = JSON.parse(result);
-
+    
     var ids = [];
 
-    file.transactions.forEach(element => {
+    file.transactions.forEach(element => {      
       ids.push(element.transactionId);
-    });
+    });    
 
   return await getTransactionsByIds(ids, options);
 }
@@ -91,14 +91,16 @@ const getTransactionsByIds = async(ids, options) => {
   const client = await getClient();
     
   var transactions = await client.invoke('app:getTransactionsByIDs', {"ids": ids});
-
+  
   var decodedTransactions = [];
 
   for (var index=transactions.length-1;index >= 0; index--)
   {    
     var id = transactions[index];
     const transactionObject = await client.transaction.decode(Buffer.from(id, 'hex'));
-    const transactionJSON = await client.transaction.toJSON(transactionObject);
+    const transactionJSON = await client.transaction.toJSON(transactionObject);    
+    
+    console.log(transactionJSON);
     
     if (transactionJSON.assetID !== options.type){
       continue;
@@ -232,6 +234,8 @@ const archiveFile = async (form) => {
   const fileArrayBuffer = await readFile(form.file);
   const encodedData = encodeData(fileArrayBuffer);
 
+  console.log(encodedData);
+
   const formLength = JSON.stringify({
     title: form.title,
     binary: encodedData
@@ -243,20 +247,23 @@ const archiveFile = async (form) => {
         moduleID: 5000,
         assetID: 102,
         nonce: Helper(accountNonce),
-        fee: Helper(formLength * 10000 * 15),
+        fee: Helper(formLength * 10000 * 5),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({
               title: form.title,
-              binary: encodedData
+              binary: encodedData,
+              timestamp: Date.now()
             }),
             recipientAddress: sender.address
         },
     },
     Buffer.from(networkIdentifier, "hex"),
-    passphrase);
+    passphrase);    
 
     var result = await sendTransaction(tx);
+
+    console.log(result);
 
     var url= apiHelper + "/push";
     var options = {

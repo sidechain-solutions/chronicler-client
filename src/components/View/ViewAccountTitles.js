@@ -20,6 +20,7 @@ const ViewAccountTitles = props => {
   const type = Object.keys(acceptedTypes).includes(props.match.params.type)
     ? props.match.params.type
     : "text";
+  console.log(acceptedTypes[type]);
 
   const getPageResults = (pageOffset = offset) => {
     getTransactions({

@@ -1,3 +1,4 @@
+import { cryptography } from "@liskhq/lisk-client";
 import FileSaver from "file-saver";
 import base91 from "node-base91";
 
@@ -17,9 +18,9 @@ export const readFile = file => {
   });
 };
 
-export const encodeData = data => base91.encode(data);
+export const encodeData = data => cryptography.bufferToHex(data); // base91.encode(data);
 
-export const decodeData = data => base91.decode(data);
+export const decodeData = data => cryptography.hexToBuffer(data); //base91.decode(data);
 
 export const saveTextArchive = data => {
   const blob = new Blob([data.text], { type: "text/plain;charset=utf-8" });

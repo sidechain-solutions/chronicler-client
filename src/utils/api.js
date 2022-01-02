@@ -164,6 +164,29 @@ const getBlocks = async(options) => {
   return result;
 }
 
+const getTransactionFromPoolFeePerAccount = async (publicKey, nonce) => {        
+  const client = await getClient();    
+  const transactions = await client.invoke('app:getTransactionsFromPool', {});      
+    
+  for (var index=0;index < transactions.length;index++)
+  {                        
+      console.log(transactions.length);           
+
+      var transaction = transactions[index];
+      var decoded = await client.transaction.decode(Buffer.from(transaction, 'hex'));
+      var transactionJSON = await client.transaction.toJSON(decoded);
+
+      if (transactionJSON.senderPublicKey === publicKey){
+        if (transactionJSON.nonce >= nonce){
+          return transactionJSON.fee;
+        }
+      }
+
+      console.log("transaction from pool", transactionJSON);      
+  };
+  return 0;
+}
+
 const sendTransaction = async(transaction) => {
   const client = await getClient();        
   const result = await client.transaction.send(transaction);
@@ -183,6 +206,8 @@ async function archiveText (form) {
   var account = await getAccountFromAddress(sender.address);
   var accountNonce = await getAccountNonce(account);
 
+  var poolFee = getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
+  
   try{
   const tx = transactions.signTransaction(
     archiveTextSchema,
@@ -190,7 +215,7 @@ async function archiveText (form) {
         moduleID: 5000,
         assetID: 101,
         nonce: Helper(accountNonce),
-        fee: Helper(formLength * 10000 * 1024 / 1000 * 10),
+        fee: poolFee > 0 ? poolFee + 10 : Helper(formLength * 10000 * 1024 / 1000 * 10),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({
@@ -231,6 +256,8 @@ const archiveFile = async (form) => {
   const account = await getAccountFromAddress(sender.address);
   const accountNonce = await getAccountNonce(account);
 
+  var poolFee = getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
+
   const fileArrayBuffer = await readFile(form.file);
   const encodedData = encodeData(fileArrayBuffer);
 
@@ -247,7 +274,7 @@ const archiveFile = async (form) => {
         moduleID: 5000,
         assetID: 102,
         nonce: Helper(accountNonce),
-        fee: Helper(formLength * 10000 * 1024 / 1000 * 10),
+        fee: poolFee > 0 ? poolFee + 10 : Helper(formLength * 10000 * 1024 / 1000 * 10),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({

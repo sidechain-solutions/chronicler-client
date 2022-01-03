@@ -166,17 +166,19 @@ const getBlocks = async(options) => {
 
 const getTransactionFromPoolFeePerAccount = async (publicKey, nonce) => {        
   const client = await getClient();    
-  const transactions = await client.invoke('app:getTransactionsFromPool', {});      
-    
+  const transactions = await client.invoke('app:getTransactionsFromPool', {});
+
+  var pubKeyHex = cryptography.bufferToHex(publicKey);    
+
   for (var index=0;index < transactions.length;index++)
   {                        
       console.log(transactions.length);           
 
       var transaction = transactions[index];
       var decoded = await client.transaction.decode(Buffer.from(transaction, 'hex'));
-      var transactionJSON = await client.transaction.toJSON(decoded);
+      var transactionJSON = await client.transaction.toJSON(decoded);                
 
-      if (transactionJSON.senderPublicKey === publicKey){
+      if (transactionJSON.senderPublicKey === pubKeyHex){
         if (transactionJSON.nonce >= nonce){
           return transactionJSON.fee;
         }

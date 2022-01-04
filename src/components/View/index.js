@@ -21,8 +21,8 @@ const View = () => {
       <strong>INFO:</strong> This is where you enter your account public key to search and view all of
       your archived titles. <br />
       <br />
-      For demo purposes, use: {"a0dfd75828422938653ebd8cd53462ad4687f0d6f373450a8418a7adc1d51b4d"}
-      <CopyToClipboard text="a0dfd75828422938653ebd8cd53462ad4687f0d6f373450a8418a7adc1d51b4d" onCopy={() => setCopied(true)}>
+      For demo purposes, use: {"lskoq7j5k3bnhnje9dpoqj6k2v3t8m6qd9pomkvvo"}
+      <CopyToClipboard text="lskoq7j5k3bnhnje9dpoqj6k2v3t8m6qd9pomkvvo" onCopy={() => setCopied(true)}>
         <FontAwesomeIcon className="link" icon={["far", "copy"]} />
       </CopyToClipboard>
       {copied && <small> copied!</small>}
@@ -41,7 +41,7 @@ const View = () => {
             <input
               className="form-control form-control-lg"
               type="text"
-              placeholder="Enter public key.."
+              placeholder="Enter lisk address.."
               onChange={handleInputChange}
               required
             />

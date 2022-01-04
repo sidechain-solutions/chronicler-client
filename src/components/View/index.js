@@ -18,7 +18,7 @@ const View = () => {
 
   const Alert = () => (
     <div className="alert alert-warning d-block text-left">
-      <strong>INFO:</strong> This is where you enter your account public key to search and view all of
+      <strong>INFO:</strong> This is where you enter your account address to search and view all of
       your archived titles. <br />
       <br />
       For demo purposes, use: {"lskoq7j5k3bnhnje9dpoqj6k2v3t8m6qd9pomkvvo"}

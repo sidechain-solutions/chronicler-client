@@ -100,13 +100,14 @@ const getTransactionsByIds = async(ids, options) => {
     const transactionObject = await client.transaction.decode(Buffer.from(id, 'hex'));
     const transactionJSON = await client.transaction.toJSON(transactionObject);    
     
-    console.log(transactionJSON);
+    console.log(transactionObject);
     
     if (transactionJSON.assetID !== options.type){
       continue;
     }    
-    
-    if (transactionJSON.senderPublicKey !== options.senderId){
+        
+    const transactionSenderPublicKey = cryptography.getBase32AddressFromPublicKey(transactionObject.senderPublicKey);    
+    if (transactionSenderPublicKey !== options.senderId){
       continue;
     }
     console.log(transactionJSON);

@@ -212,7 +212,7 @@ async function archiveText (form) {
   var account = await getAccountFromAddress(sender.address);
   var accountNonce = await getAccountNonce(account);
 
-  var poolFee = getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
+  var poolFee = await getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
   
   try{
   const tx = transactions.signTransaction(
@@ -221,7 +221,7 @@ async function archiveText (form) {
         moduleID: 5000,
         assetID: 101,
         nonce: Helper(accountNonce),
-        fee: poolFee > 0 ? poolFee + 10 : Helper(formLength * 10000 * 1024 / 1000 * 10),
+        fee: poolFee > 0 ? Helper(poolFee + 10) : Helper(formLength * 10000 * 1024 / 1000 * 10),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({
@@ -235,7 +235,7 @@ async function archiveText (form) {
     Buffer.from(networkIdentifier, "hex"),
     passphrase);    
         
-    var result = await sendTransaction(tx);
+    var result = await sendTransaction(tx);    
 
     var url= apiHelper + "/push";
     var options = {
@@ -249,6 +249,7 @@ async function archiveText (form) {
     console.log("request persist", req.status);
     
     return result;  
+    
   }catch(e){
     console.log("error signing transaction", e);
   }   
@@ -256,6 +257,7 @@ async function archiveText (form) {
 
 const archiveFile = async (form) => {
   
+  console.log("archiveFile");
   const passphrase = form.passphrase ? form.passphrase : fundingPassphrase;
   const sender = cryptography.getAddressAndPublicKeyFromPassphrase(passphrase);
 
@@ -283,7 +285,7 @@ const archiveFile = async (form) => {
         moduleID: 5000,
         assetID: 102,
         nonce: Helper(accountNonce),
-        fee: poolFee > 0 ? poolFee + 10 : Helper(formLength * 10000 * 1024 / 1000 * 10),
+        fee: poolFee > 0 ? Helper(poolFee + 10) : Helper(formLength * 10000 * 1024 / 1000 * 10),
         senderPublicKey: sender.publicKey,
         asset: {
             data: JSON.stringify({
@@ -297,10 +299,9 @@ const archiveFile = async (form) => {
     Buffer.from(networkIdentifier, "hex"),
     passphrase);    
 
+    try{
     var result = await sendTransaction(tx);
-
-    console.log(result);
-
+    
     var url= apiHelper + "/push";
     var options = {
       method: "POST",
@@ -311,6 +312,10 @@ const archiveFile = async (form) => {
     var req = await fetch (url, options);    
 
     console.log("request persist", req.status);
+  
+  }catch(e){
+    console.log("error signing transaction", e);
+  }
 
   return result;   
 };

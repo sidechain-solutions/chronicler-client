@@ -2,7 +2,7 @@ import React from "react";
 import Dropzone from "react-dropzone";
 
 const DragDrop = ({ onDrop }) => {
-  const maxSize = 1000000;
+  const maxSize = 10000;
 
   return (
     <Dropzone onDrop={onDrop} minSize={0} maxSize={maxSize}>
@@ -27,7 +27,7 @@ const DragDrop = ({ onDrop }) => {
                 )}
                 {isFileTooLarge && (
                   <div className="text-danger text-center mt-3">
-                    <strong>File is too large (max ~1mB)</strong>
+                    <strong>File is too large (max ~10kB)</strong>
                   </div>
                 )}
               </div>

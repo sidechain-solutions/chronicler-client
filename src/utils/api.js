@@ -169,23 +169,26 @@ const getTransactionFromPoolFeePerAccount = async (publicKey, nonce) => {
   const client = await getClient();    
   const transactions = await client.invoke('app:getTransactionsFromPool', {});
 
-  var pubKeyHex = cryptography.bufferToHex(publicKey);    
+  var pubKeyHex = cryptography.bufferToHex(publicKey);   
+  console.log("nonce", nonce); 
+  console.log("account pubKey",pubKeyHex);
 
   for (var index=0;index < transactions.length;index++)
   {                        
-      console.log(transactions.length);           
+      console.log("transactions in pool", transactions.length); 
 
       var transaction = transactions[index];
       var decoded = await client.transaction.decode(Buffer.from(transaction, 'hex'));
       var transactionJSON = await client.transaction.toJSON(decoded);                
+      
+      console.log("transaction from pool", transactionJSON);      
 
       if (transactionJSON.senderPublicKey === pubKeyHex){
         if (transactionJSON.nonce >= nonce){
+          console.log("fee", transactionJSON.fee);
           return transactionJSON.fee;
         }
-      }
-
-      console.log("transaction from pool", transactionJSON);      
+      }      
   };
   return 0;
 }
@@ -259,7 +262,7 @@ const archiveFile = async (form) => {
   const account = await getAccountFromAddress(sender.address);
   const accountNonce = await getAccountNonce(account);
 
-  var poolFee = getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
+  var poolFee = await getTransactionFromPoolFeePerAccount(sender.publicKey, accountNonce);
 
   const fileArrayBuffer = await readFile(form.file);
   const encodedData = encodeData(fileArrayBuffer);
@@ -270,6 +273,9 @@ const archiveFile = async (form) => {
     title: form.title,
     binary: encodedData
   }).length;
+
+  console.log("file length", formLength);
+  console.log("pool fee", poolFee);
 
   const tx = await transactions.signTransaction(
     archiveBinarySchema,

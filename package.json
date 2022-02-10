@@ -26,7 +26,7 @@
     "jquery": "^3.4.1",
     "lisk-elements": "^2.4.2",
     "node-base91": "^0.3.4",
-    "node-sass": "^4.14.0",
+    "node-sass": "^7.0.0",
     "popper.js": "^1.15.0",
     "react": "^16.8.6",
     "react-copy-to-clipboard": "^5.0.1",

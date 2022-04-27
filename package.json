@@ -1,6 +1,6 @@
 {
   "name": "chronicler-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Sidechain Solutions",
   "homepage": "https://www.chronicler.cc",
   "description": "A distributed network to store, audit, or verify various types of data built using the Lisk SDK.",
